@@ -2,12 +2,6 @@ pipeline {
     agent any
 
     stages {
-        stage('Clone Repository') {
-            steps {
-                git branch: 'main', url: 'https://github.com/vladimir-ponomarenko/ComputerSystemArchitectureCoursework.git'
-            }
-        }
-
         stage('Build Docker Image') {
             steps {
                 script {
@@ -19,13 +13,13 @@ pipeline {
         stage('Deploy') {
             steps {
                 script {
-                    dockerImage.inside {
-                        sh '''
-                            docker stop app-container || true
-                            docker rm app-container || true
-                            docker run -d --name app-container -p 8080:8080 local/repository:${env.BUILD_NUMBER}
-                        '''
-                    }
+                    sh '''
+                        docker stop app-container || true
+                        docker rm app-container || true
+                    '''
+                    sh '''
+                        docker run -d --name app-container -p 8080:8080 local/repository:${env.BUILD_NUMBER}
+                    '''
                 }
             }
         }
